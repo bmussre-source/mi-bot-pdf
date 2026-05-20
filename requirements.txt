@@ -1,3 +1,4 @@
 streamlit
 pypdf
 streamlit-mic-recorder
+google-generativeai
