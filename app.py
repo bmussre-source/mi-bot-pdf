@@ -15,7 +15,7 @@ st.set_page_config(
 # CONFIGURACIÓN DE LA INTELIGENCIA ARTIFICIAL (GEMINI)
 # ==========================================================
 # Reemplaza "TU_API_KEY_AQUÍ" con tu clave real de Google AI Studio.
-API_KEY = "TU_API_KEY_AQUÍ" 
+API_KEY = "AIzaSyBZHAd2CVd4r6_adBvvE9UwoA9afC2RTd4" 
 genai.configure(api_key=API_KEY)
 
 # Estilos visuales personalizados para mejorar la legibilidad y estética
@@ -122,25 +122,29 @@ if pregunta:
     if not base_conocimiento:
         respuesta_bot = "Actualmente no encuentro documentos PDFs cargados en la carpeta 'documentos'. Por favor, añade archivos para que pueda extraer la información y responderte."
     else:
-        # Creamos una instrucción estricta (Prompt) para que la IA solo responda usando tus PDFs
+        # Optimizamos el prompt recortando la base de conocimiento a los primeros 15,000 caracteres
         instruccion_ia = f"""
         Actúas como un asistente de lectura experto y accesible. Tu tarea es responder la pregunta del usuario utilizando exclusivamente la base de conocimientos proporcionada a continuación, la cual fue extraída de sus documentos PDF. 
         Si la respuesta no se encuentra en el texto proporcionado, di de manera muy amable que no encontraste esa información específica en los documentos actuales.
         Sé claro, directo y conciso en tu respuesta para facilitar su lectura en voz alta.
 
         Base de conocimientos de los PDFs:
-        {base_conocimiento}
+        {base_conocimiento[:15000]}
 
         Pregunta del usuario:
         {pregunta}
         """
         
         try:
-            # Llamamos al modelo de Google Gemini para procesar la información
+            # Llamamos al modelo de Google Gemini para procesar la información de manera rápida
             with st.spinner("Buscando y analizando en tus documentos..."):
-                # Usamos el modelo actualizado y totalmente compatible
                 model = genai.GenerativeModel('gemini-2.5-flash') 
-                resultado = model.generate_content(instruccion_ia)
+                
+                # Forzamos una baja temperatura para respuestas lógicas, precisas y veloces
+                resultado = model.generate_content(
+                    instruccion_ia,
+                    generation_config={"temperature": 0.3}
+                )
                 respuesta_bot = resultado.text
         except Exception as e:
             respuesta_bot = f"Lo siento, ocurrió un problema técnico al conectar con el cerebro de IA: {e}"
@@ -175,21 +179,17 @@ if pregunta:
     </style>
 
     <script>
-        // Detener cualquier lectura previa del navegador para que no se empalmen las voces
         window.speechSynthesis.cancel();
 
         var mensajeVoz = new SpeechSynthesisUtterance("{respuesta_limpia}");
-        mensajeVoz.lang = 'es-ES'; // Configura la voz en idioma español
+        mensajeVoz.lang = 'es-ES';
 
-        // Cuando la voz del navegador termine, las ondas desaparecen automáticamente de la pantalla
         mensajeVoz.onend = function(event) {{
             document.getElementById("contenedor-ondas").style.display = "none";
         }};
 
-        // Ordenar al navegador que comience a hablar inmediatamente
         window.speechSynthesis.speak(mensajeVoz);
     </script>
     """
     
-    # Pintar las ondas y ejecutar el audio nativo en el navegador
     st.components.v1.html(componente_accesible, height=75)
