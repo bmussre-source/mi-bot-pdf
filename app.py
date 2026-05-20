@@ -37,8 +37,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🤖 Mi Bot de Consulta PDF Accesible Real")
-st.write("Bienvenido. Puedes añadir PDFs a la carpeta del proyecto, hacer preguntas por escrito o dictarlas usando tu voz.")
+st.title("🤖 Bot de Consulta ONBOARDING 5400")
+st.write("Bienvenido. Puedes hacer preguntas por escrito o dictarlas usando tu voz.")
 
 # ==========================================================
 # PASO 1: CONEXIÓN Y LECTURA DE DATOS DESDE LA CARPETA
