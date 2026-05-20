@@ -12,11 +12,15 @@ st.set_page_config(
 )
 
 # ==========================================================
-# CONFIGURACIÓN DE LA INTELIGENCIA ARTIFICIAL (GEMINI)
+# CONFIGURACIÓN SEGURA DE LA INTELIGENCIA ARTIFICIAL (GEMINI)
 # ==========================================================
-# Reemplaza "TU_API_KEY_AQUÍ" con tu clave real de Google AI Studio.
-API_KEY = "AIzaSyBZHAd2CVd4r6_adBvvE9UwoA9afC2RTd4" 
-genai.configure(api_key=API_KEY)
+# CIBERSEGURIDAD: La clave ya no se escribe aquí. Se lee encriptada desde el servidor.
+if "GEMINI_API_KEY" in st.secrets:
+    # .strip() elimina espacios invisibles accidentales al inicio o final de la clave
+    genai.configure(api_key=st.secrets["AIzaSyAhi0llZ7xr8-dRVpm3mhvAeo2sumV93PM"].strip())
+else:
+    st.error("⚠️ Configuración de seguridad ausente. Por favor, añade la variable 'GEMINI_API_KEY' en la sección de Secrets de Streamlit.")
+    st.stop() # Detiene la ejecución para evitar que la app intente conectar sin clave
 
 # Estilos visuales personalizados para mejorar la legibilidad y estética
 st.markdown("""
@@ -179,11 +183,13 @@ if pregunta:
     </style>
 
     <script>
+        // Cancelar lecturas previas pendientes
         window.speechSynthesis.cancel();
 
         var mensajeVoz = new SpeechSynthesisUtterance("{respuesta_limpia}");
         mensajeVoz.lang = 'es-ES';
 
+        // Ocultar las ondas dinámicas en la pantalla al finalizar el audio
         mensajeVoz.onend = function(event) {{
             document.getElementById("contenedor-ondas").style.display = "none";
         }};
