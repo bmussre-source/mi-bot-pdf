@@ -17,7 +17,7 @@ st.set_page_config(
 # CIBERSEGURIDAD: La clave ya no se escribe aquí. Se lee encriptada desde el servidor.
 if "GEMINI_API_KEY" in st.secrets:
     # .strip() elimina espacios invisibles accidentales al inicio o final de la clave
-    genai.configure(api_key=st.secrets["AIzaSyAhi0llZ7xr8-dRVpm3mhvAeo2sumV93PM"].strip())
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"].strip())
 else:
     st.error("⚠️ Configuración de seguridad ausente. Por favor, añade la variable 'GEMINI_API_KEY' en la sección de Secrets de Streamlit.")
     st.stop() # Detiene la ejecución para evitar que la app intente conectar sin clave
